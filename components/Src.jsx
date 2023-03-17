@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {StyleSheet, Button, Pressable, Text, TextInput, View} from 'react-native';
+import {StyleSheet, Button, Pressable, FlatList, Text, TextInput, View, Keyboard} from 'react-native';
+import Checkbox from 'expo-checkbox';
 
 import {textStyle} from '../styles/Main.js'
 
@@ -33,11 +34,21 @@ const Counter = () => {
 
 const Todo = () => {
     const [elementText, setElementText] = useState("");
+    const [listItems, setListItems] = useState([]);
 
-    const addElement = (input) => {
-        console.log(input);
+    const addElement = () => {
         setElementText("");
-        console.log(elementText);
+        setListItems([...listItems, {key: elementText}])
+    }
+
+    const List = (props) => {
+        const [isChecked, setChecked] = useState(false);
+        return(
+            <View style={todoStyle.listEle}>
+                <Checkbox value={isChecked} onValueChange={setChecked}/>
+                <Text style={textStyle.smallMed}>{props.item.key}</Text>
+            </View>
+        )
     }
 
     return (
@@ -53,11 +64,16 @@ const Todo = () => {
                 margin: 5,
                 fontSize: 15,
                 width: '80%',
-                }} placeholder={'Enter todo item here'} placeholderTextColor={'lightblue'} onChangeText={newText => setElementText(newText)} defaultValue={elementText} 
+                }} placeholder={'Enter todo item here'} placeholderTextColor={'lightblue'} onSubmitEditing={Keyboard.dismiss} onChangeText={newText => setElementText(newText)} defaultValue={elementText} 
             />
-            <Pressable onPress={() => addElement("This is a test message")}>
+            <Pressable disabled={(elementText.trim().length === 0)} onPress={() => addElement()}>
                 <Text style={[textStyle.smallMed, {color: 'lightblue'}]}>Add Element </Text>
             </Pressable>
+
+            <View style={todoStyle.list}>
+                <FlatList  data={listItems} showsVerticalScrollIndicator={false} renderItem={({item}) => <List item={item} />} />
+            </View>
+        
         </View>
     )
 }
@@ -90,6 +106,20 @@ const todoStyle = StyleSheet.create({
     },
     highlight: {
         color: 'red'
+    },
+    list: {
+        flex: 1,
+        width: '100%',
+        padding: 40,    
+        justifyContent: 'start',    
+    },
+    listEle: {
+        
+        justifyContent: 'start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        //marginHorizontal: 30,
+
     }
 }) 
 

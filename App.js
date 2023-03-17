@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Pressable} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Pressable, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler'
 
 import Main from './components/Src'
 
@@ -14,8 +15,12 @@ export default function App() {
   const [hidden, setHidden] = useState(false);
   const [statusBarStyle, setStatusBarStyle] = useState(STYLES[2]);
 
-  const Nav = () => {
+  const tap = Gesture.Tap().onStart(() => {
+    Keyboard.dismiss();
+    console.log('tap');
+  });
 
+  const Nav = () => {
     return (
         <View style={styles.nav}>
           <Pressable onPress={() => setPageNum(0)} style={styles.navOp}>
@@ -27,18 +32,20 @@ export default function App() {
           </Pressable>
         </View>
     )
-}
+  }
 
   return (
+    <GestureDetector gesture={tap}>
     <SafeAreaView style={styles.container}>
-      <StatusBar hidden='Hidden' barStyle={'dark-content'} style='light-content'/>
-      <View style={styles.main}>
-        <Main page={pageNum}/>
-      </View>
-     
+      <View>
+        <StatusBar />
+        <View style={styles.main}>
+          <Main page={pageNum}/>
+        </View>
       <Nav />
-      
+      </View>
     </SafeAreaView>
+    </GestureDetector>
   );
   
 }
@@ -51,8 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'start',
   },
   nav: {
-    width: '100%',
-    height: '8%',
+    height: '10%',
     //backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
